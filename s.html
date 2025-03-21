@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance and Marks Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            color: black;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #000;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            background-color: #000;
+        }
+
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+        }
+
+        nav a:hover {
+            color: #ff9800;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #000;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        form input, form button {
+            padding: 10px;
+            margin: 5px 0;
+            width: 100%;
+            max-width: 300px;
+            display: block;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            color: black;
+        }
+
+        form button {
+            background-color: #ff9800;
+            border: none;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #e68900;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        td {
+            background-color: #ffffff;
+        }
+
+        td, th {
+            color: black;
+        }
+
+        #loginMessage {
+            color: #ff9800;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Attendance and Marks Management System</h1>
+<section id="attendance" class="section">
+        <h2>Mark Your Attendance</h2>
+        <form id="attendanceForm" onsubmit="markAttendance(event)">
+            <label for="attendanceDate">Date:</label>
+            <input type="date" id="attendanceDate" required>
+
+            <label for="attendanceStatus">Status:</label>
+            <select id="attendanceStatus" required>
+                <option value="present">Present</option>
+                <option value="absent">Absent</option>
+            </select>
+
+            <button type="submit">Submit Attendance</button>
+        </form>
+ 
+      
+ <h3>Attendance Records</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="attendanceTable">
+                <!-- Attendance records will be inserted here dynamically -->
+            </tbody>
+        </table>
+</header>
+
+<!-- Navigation Menu -->
+<nav>
+    <a href="#" onclick="showSection('home')">Home</a>
+    <a href="#" onclick="showSection('attendance')">Attendance</a>
+    <a href="#" onclick="showSection('login')">Login</a>
+    <a href="#" onclick="showSection('teacherLogin')">Teacher Login</a>
+    <a href="#" onclick="showSection('result')">Results</a>
+    <a href="#" onclick="showSection('timetable')">Timetable</a> <!-- Added timetable link -->
+</nav>
+
+<main>
+
+    <!-- Home Section -->
+    <section id="home" class="section active">
+        <h2>Welcome to the Student Management System</h2>
+        <p> marks, and view your results all in one place!</p>
+    </section>
+
+    <!-- Login Section (Student Login) -->
+    <section id="login" class="section">
+        <h2>Student Login</h2>
+        <form id="AttendanceForm" onsubmit="studentLogin(event)">
+            <input type="text" id="regNumber" placeholder="Enter Registration Number" required>
+            <input type="password" id="studentPassword" placeholder="Enter Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p id="LoginMessage"></p>
+    </section>
+
+    <!-- Teacher Login Section -->
+    <section id="teacherLogin" class="section">
+        <h2>Teacher Login</h2>
+        <form id="teacherLoginForm" onsubmit="teacherLogin(event)">
+            <input type="text" id="teacherUsername" placeholder="Enter Username" required>
+            <input type="password" id="teacherPassword" placeholder="Enter Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p id="teacherLoginMessage"></p>
+    </section>
+
+    <!-- Result Section (For Students) -->
+    <section id="result" class="section">
+        <h2>Your Results</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Marks</th>
+                </tr>
+            </thead>
+            <tbody id="resultTable">
+                <!-- Dynamic result rows will be inserted here -->
+            </tbody>
+        </table>
+    </section>
+
+       
+    <!-- Timetable Section -->
+    <section id="timetable" class="section">
+        <h2>Your Timetable</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Time</th>
+                    <th>Subject</th>
+                </tr>
+          <tr>
+                  <th>Monday>
+          </tr>
+            </thead>
+            <tbody id="timetableTable">
+                <!-- Dynamic timetable rows will be inserted here -->
+            </tbody>
+        </table>
+    </section>
+       <h2>Mark Your Attendance</h2>
+        </main>
+
+<footer>
+    <p>&copy; 2025 Attendance & Marks System</p>
+</footer>
+
+<script>
+    // Sample data for students' credentials and results (mock database)
+    const studentsData = {
+        "12345": { // Registration Number
+            name: "John Doe",
+            password: "password123",
+            results: [
+                { subject: "Maths", marks: 85 },
+                { subject: "Physics", marks: 72 }
+            ],
+            timetable: [
+                { day: "Monday", time: "9:00 AM", subject: "Maths" },
+                { day: "Monday", time: "11:00 AM", subject: "Physics" },
+                { day: "Tuesday", time: "10:00 AM", subject: "Chemistry" }
+            ]
+        },
+        "67890": {
+            name: "Jane Smith",
+            password: "password456",
+            results: [
+                { subject: "Maths", marks: 90 },
+                { subject: "Physics", marks: 80 }
+            ],
+            timetable: [
+                { day: "Monday", time: "10:00 AM", subject: "Biology" },
+                { day: "Wednesday", time: "9:00 AM", subject: "Maths" },
+                { day: "Friday", time: "11:00 AM", subject: "Physics" }
+            ]
+        }
+    };
+
+    // Sample teacher credentials (mock database)
+    const teachersData = {
+        "teacher1": { username: "teacher1", password: "password1", name: "Dr. Brown" },
+        "teacher2": { username: "teacher2", password: "password2", name: "Ms. Green" }
+    };
+
+    // Function to show or hide sections based on navigation
+    function showSection(section) {
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(function(s) {
+            s.classList.remove('active');
+        });
+
+        const activeSection = document.getElementById(section);
+        activeSection.classList.add('active');
+    }
+
+    // Function to retrieve and display results based on the entered registration number and password
+    function studentLogin(event) {
+        event.preventDefault();
+
+        const regNumber = document.getElementById('regNumber').value;
+        const password = document.getElementById('studentPassword').value;
+
+        // Check if the student exists in the mock data and the password is correct
+        if (studentsData[regNumber] && studentsData[regNumber].password === password) {
+            localStorage.setItem('studentData', JSON.stringify(studentsData[regNumber]));
+            showSection('result');
+            loadResult();
+        } else {
+            document.getElementById('LoginMessage').textContent = 'Invalid registration number or password!';
+        }
+    }
+
+    // Function to load the student's results from localStorage
+    function loadResult() {
+        const student = JSON.parse(localStorage.getItem('studentData'));
+        if (student) {
+            const resultTable = document.getElementById('resultTable');
+            resultTable.innerHTML = ''; // Clear existing table rows
+
+            student.results.forEach(function(record) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${record.subject}</td><td>${record.marks}</td>`;
+                resultTable.appendChild(row);
+            });
+        }
+    }
+
+    // Function to load the student's timetable from localStorage
+    function loadTimetable() {
+        const student = JSON.parse(localStorage.getItem('studentData'));
+        if (student) {
+            const timetableTable = document.getElementById('timetableTable');
+            timetableTable.innerHTML = ''; // Clear existing table rows
+
+            student.timetable.forEach(function(record) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${record.day}</td><td>${record.time}</td><td>${record.subject}</td>`;
+                timetableTable.appendChild(row);
+            });
+        }
+    }
+
+    // Teacher login functionality
+    function teacherLogin(event) {
+        event.preventDefault();
+
+        const teacherUsername = document.getElementById('teacherUsername').value;
+        const teacherPassword = document.getElementById('teacherPassword').value;
+
+        if (teachersData[teacherUsername] && teachersData[teacherUsername].password === teacherPassword) {
+            localStorage.setItem('teacherData', JSON.stringify(teachersData[teacherUsername]));
+            document.getElementById('teacherLoginMessage').textContent = 'Teacher logged in successfully!';
+            // Additional functionality for teacher can be added here
+        } else {
+            document.getElementById('teacherLoginMessage').textContent = 'Invalid teacher credentials!';
+        }
+    }
+
+    // Load timetable when the timetable section is activated
+    document.getElementById('timetable').addEventListener('click', loadTimetable);
+
+</script>
+
+</body>
+</html>
